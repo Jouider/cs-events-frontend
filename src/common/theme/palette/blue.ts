@@ -90,8 +90,8 @@ const palette: CustomPalette = {
   },
   background: {
     paper: '#fff',
-    default: GREY[100],
-    neutral: GREY[200],
+    default: GREY[0],
+    neutral: GREY[100],
   },
   action: {
     active: GREY[600],

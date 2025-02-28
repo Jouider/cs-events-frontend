@@ -78,7 +78,7 @@ const useAuth = (): AuthData => {
     const { success, data } = response;
     let returnedUser = null;
     if (!success) {
-      localStorage.removeItem('authToken');
+      console.log('NO USER ');
     } else {
       returnedUser = data?.user ?? null;
     }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Footer from './Footer';
-import Leftbar, { LEFTBAR_WIDTH } from './Leftbar';
 import Topbar from './Topbar';
 import Box from '@mui/material/Box';
 import { Container, useTheme, Button, Typography } from '@mui/material';
@@ -13,10 +12,8 @@ interface ILayoutProps {
   children: React.ReactNode;
 }
 
-const Layout = (props: ILayoutProps) => {
-  const { children } = props;
+const Layout = ({ children }: ILayoutProps) => {
   const theme = useTheme();
-  const [openLeftbar, setOpenLeftbar] = useState(true);
   const [display, setDisplay] = useState(true);
   const underMaintenance = process.env.NEXT_PUBLIC_UNDER_MAINTENANCE === 'true';
   const { t } = useTranslation('common');
@@ -63,9 +60,7 @@ const Layout = (props: ILayoutProps) => {
               paddingLeft: '20px',
               paddingRight: '20px',
             }}
-            onClick={() => {
-              window.history.back();
-            }}
+            onClick={() => window.history.back()}
           >
             <ArrowBackIcon />
             {t('return')}
@@ -81,22 +76,16 @@ const Layout = (props: ILayoutProps) => {
         <title>{process.env.NEXT_PUBLIC_APP_TITLE}</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <Box
-        sx={{
-          display: 'flex',
-        }}
-      >
+      <Box sx={{ display: 'flex' }}>
         <Box sx={{ minHeight: '100vh', width: '100vw' }}>
           <Stack direction="column" sx={{ height: '100%' }}>
-            <Leftbar open={openLeftbar} onToggle={(open) => setOpenLeftbar(open)} />
             <Topbar />
             <Box
               sx={{
                 display: 'flex',
                 flex: 1,
                 justifyContent: 'center',
-                marginLeft: openLeftbar ? LEFTBAR_WIDTH + 'px' : 0,
-                width: openLeftbar ? `calc(100% - ${LEFTBAR_WIDTH}px)` : '100%',
+                width: '100%',
               }}
             >
               <Container
@@ -109,19 +98,19 @@ const Layout = (props: ILayoutProps) => {
                   }),
                 }}
               >
-                <Box component="main" sx={{}}>
+                <Box component="main" sx={{ textAlign: 'center' }}>
                   {children}
                 </Box>
               </Container>
             </Box>
             <Box
               sx={{
-                marginLeft: openLeftbar ? LEFTBAR_WIDTH + 'px' : 0,
-                maxWidth: openLeftbar ? `calc(100% - ${LEFTBAR_WIDTH}px)` : '100%',
+                width: '100%',
                 transition: theme.transitions.create(['all'], {
                   easing: theme.transitions.easing.sharp,
                   duration: theme.transitions.duration.leavingScreen,
                 }),
+                textAlign: 'center',
               }}
             >
               <Footer />

@@ -1,27 +1,36 @@
-import ApiRoutes from '@modules/events/defs/api-routes';
+import ApiRoutes from '@common/defs/api-routes';
+import { ROLE } from '@modules/permissions/defs/types';
 import { Event } from '@modules/events/defs/types';
-import useItems, { UseItems, UseItemsOptions, defaultOptions } from '@common/hooks/useItems';
+import useItems, { UseItemsOptions, defaultOptions } from '@common/hooks/useItems';
 
 export interface CreateOneInput {
-  title: string;
+  id: number;
+  name: string;
   description: string;
-  date: string;
+  startDate: Date;
+  endDate: Date;
   location: string;
+  capacity: number;
+  coverImageUrl?: File | null;
 }
 
 export interface UpdateOneInput {
-  title?: string;
-  description?: string;
-  date?: string;
-  location?: string;
+  id?: number;
+  name: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  location: string;
+  capacity: number;
+  coverImageUrl?: File | null;
 }
 
-const useEvents: UseItems<Event, CreateOneInput, UpdateOneInput> = (
-  opts: UseItemsOptions = defaultOptions
-) => {
-  const apiRoutes = ApiRoutes;
-  const useItemsHook = useItems<Event, CreateOneInput, UpdateOneInput>(apiRoutes, opts);
-  return useItemsHook;
-};
+export type UpsertOneInput = CreateOneInput | UpdateOneInput; 
+
+function useEvents(opts: UseItemsOptions = defaultOptions) {
+  const apiRoutes = ApiRoutes.Events;
+  const itemsHook = useItems<Event, CreateOneInput, UpdateOneInput>(apiRoutes, opts);
+  return itemsHook;
+}
 
 export default useEvents;

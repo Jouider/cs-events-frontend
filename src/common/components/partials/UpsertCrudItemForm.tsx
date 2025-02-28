@@ -145,57 +145,34 @@ const UpsertCrudItemForm = <
   }, [data]);
 
   const onSubmit = async (data: CreateOneInput | UpdateOneInput) => {
+    console.log('Form submission started', data);  // Add this line
+
     if (onPreSubmit) {
+      console.log('Running preSubmit checks');     // Add this line
       const preSubmitResponse = onPreSubmit(data);
       const error = preSubmitResponse.error;
       if (error) {
         enqueueSnackbar(error, { variant: 'error' });
+        console.log('PreSubmit error:', error);    // Add this line
         return;
       }
       data = preSubmitResponse.data;
     }
+
     let response;
-
-    if (filesToUpload && filesToUpload.length > 0) {
-      const uploads = await filesToUpload.reduce(async (uploads, fileToUpload) => {
-        if (uploads instanceof Promise) {
-          uploads = await uploads;
-        }
-        const { data, success } = fileToUpload.uploadId
-          ? await updateOneUpload(fileToUpload.uploadId, { file: fileToUpload.file })
-          : await createOneUpload({ file: fileToUpload.file });
-        const uploadId = success ? data?.item.id : null;
-        return {
-          ...uploads,
-          ...(uploadId && { [fileToUpload.key]: uploadId }),
-        };
-      }, {});
-      data = { ...data, ...uploads };
-    }
-
-    if (mode === FORM_MODE.UPDATE && item) {
-      response = await updateOne(item.id, data as UpdateOneInput, {
-        displayProgress: true,
-        displaySuccess: true,
-      });
-    } else if (mode === FORM_MODE.PATCH && item) {
-      response = await patchOne(item.id, data as Partial<UpdateOneInput>, {
-        displayProgress: true,
-        displaySuccess: true,
-      });
-    } else {
-      response = await createOne(data as CreateOneInput, {
-        displayProgress: true,
-        displaySuccess: true,
-      });
-    }
-    if (response.success) {
-      if (uploadsIdsToDelete && uploadsIdsToDelete.length > 0) {
-        deleteMulti(uploadsIdsToDelete);
+    
+    try {  // Add try-catch block
+      if (mode === FORM_MODE.CREATE) {
+        console.log('Creating new item with data:', data);  // Add this line
+        response = await createOne(data as CreateOneInput, {
+          displayProgress: true,
+          displaySuccess: true,
+        });
+        console.log('Create response:', response);  // Add this line
       }
-      if (onPostSubmit) {
-        onPostSubmit(data, response, methods);
-      }
+      // ... rest of your submission logic
+    } catch (error) {
+      console.error('Submission error:', error);    // Add this line
     }
   };
 
@@ -257,6 +234,10 @@ const UpsertCrudItemForm = <
                       type="submit"
                       variant="contained"
                       loading={isSubmitting}
+                      onClick={() => {
+                        console.log('Submit button clicked');
+                        handleSubmit(onSubmit)();
+                      }}
                     >
                       {t('common:save')}
                     </LoadingButton>

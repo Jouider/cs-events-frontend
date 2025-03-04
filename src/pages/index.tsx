@@ -1,22 +1,27 @@
-import PageHeader from '@common/components/lib/partials/PageHeader';
-import Routes from '@common/defs/routes';
-import withAuth, { AUTH_MODE } from '@modules/auth/hocs/withAuth';
-import { NextPage } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import { Container } from '@mui/material';
+import EventList from '@modules/events/components/EventList';
+import Hero from '@modules/events/components/Hero';
+import CategorySelection from '@modules/events/components/CategorySelection';
+import { categories } from '@modules/events/data/categories';
+import { Category } from '@modules/events/defs/types';
 
-const Index: NextPage = () => {
-  const { t } = useTranslation(['home']);
+const EventsPage: React.FC = () => {
+  const handleCategorySelect = (category: Category) => {
+    console.log('Selected category:', category.name);
+    // Add your logic here for when a category is selected
+  };
   return (
     <>
-      <PageHeader title={t('home:dashboard')} />
+      <Hero />
+      <Container maxWidth="lg">
+        <CategorySelection categories={categories} onSelectCategory={handleCategorySelect} />
+      </Container>
+      <Container maxWidth="lg">
+        <EventList />
+      </Container>
     </>
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['topbar', 'footer', 'leftbar', 'home'])),
-  },
-});
-export default Index;
+export default EventsPage;

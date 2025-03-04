@@ -12,6 +12,6 @@ const RegisterPage: NextPage = () => {
 };
 
 export default withAuth(RegisterPage, {
-  mode: AUTH_MODE.LOGGED_OUT,
+  mode: AUTH_MODE.LOGGED_IN,
   redirectUrl: Routes.Common.Home,
 });

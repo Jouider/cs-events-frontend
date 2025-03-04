@@ -12,9 +12,6 @@ const EventsPage: React.FC = () => {
     console.log('Selected category:', category.name);
     // Add your logic here for when a category is selected
   };
-
-
-
   return (
     <>
       <Hero />

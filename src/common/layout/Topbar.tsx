@@ -268,16 +268,16 @@ const Topbar: React.FC = () => {
         <Container maxWidth="xl">
           <Toolbar sx={{ padding: '8px 0' }}>
             <Typography
-              variant="h6"
+              variant="h3"
               onClick={() => router.push('/')}
               sx={{
-                fontWeight: 800,
-                fontSize: '24px',
+                fontWeight: 900,
+                fontSize: '100px',
                 color: '#D1410C',
                 cursor: 'pointer',
               }}
             >
-              eventbrite
+              Evencio
             </Typography>
 
             <SearchBar />
@@ -286,17 +286,19 @@ const Topbar: React.FC = () => {
 
             <Stack direction="row" spacing={1} alignItems="center">
               <NavButton onClick={() => router.push('/events')}>Browse Events</NavButton>
-              <NavButton onClick={() => router.push(Routes.Events.CreateEvent)}>Host an Event</NavButton>
+              <NavButton onClick={() => router.push(Routes.Events.CreateEvent)}>
+                Host an Event
+              </NavButton>
               <NavButton endIcon={<KeyboardArrowDown />} onClick={handleHelpMenuOpen}>
                 Help
               </NavButton>
 
               {user ? (
                 <>
-                  <IconButton 
-                    size="large" 
+                  <IconButton
+                    size="large"
                     sx={{ color: '#1E0A3C' }}
-                    onClick={handleNotificationClick}  // Add this line
+                    onClick={handleNotificationClick} // Add this line
                   >
                     <NotificationBadge badgeContent={unreadCount} color="error">
                       <NotificationsNone />
@@ -333,7 +335,9 @@ const Topbar: React.FC = () => {
                             key={notification.id}
                             onClick={() => handleNotificationItemClick(notification)}
                             sx={{
-                              backgroundColor: notification.read ? 'transparent' : 'rgba(209, 65, 12, 0.05)',
+                              backgroundColor: notification.read
+                                ? 'transparent'
+                                : 'rgba(209, 65, 12, 0.05)',
                             }}
                           >
                             <ListItemAvatar>
@@ -343,7 +347,9 @@ const Topbar: React.FC = () => {
                             </ListItemAvatar>
                             <ListItemText
                               primary={notification.message}
-                              secondary={notification.created_at && dayjs(notification.created_at).fromNow()}
+                              secondary={
+                                notification.created_at && dayjs(notification.created_at).fromNow()
+                              }
                               primaryTypographyProps={{
                                 variant: 'body1',
                                 color: notification.read ? 'text.primary' : '#D1410C',
@@ -353,9 +359,7 @@ const Topbar: React.FC = () => {
                         ))
                       ) : (
                         <Box sx={{ p: 3, textAlign: 'center' }}>
-                          <Typography color="text.secondary">
-                            No notifications yet
-                          </Typography>
+                          <Typography color="text.secondary">No notifications yet</Typography>
                         </Box>
                       )}
                     </List>

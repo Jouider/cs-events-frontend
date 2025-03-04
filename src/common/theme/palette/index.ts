@@ -1,4 +1,4 @@
-import palette from '@common/theme/palette/blue';
+import palette from '@common/theme/palette/eventbrite';
 
 declare module '@mui/material/styles' {
   interface Theme {}

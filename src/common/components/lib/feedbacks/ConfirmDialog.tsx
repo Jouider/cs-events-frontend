@@ -39,7 +39,7 @@ const ConfirmDialog = ({
         <DialogActions>
           {cancellable && (
             <Button color="inherit" onClick={onClose}>
-              {t('common:cancel')}
+              {t(' Close ')}
             </Button>
           )}
           {action}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { borderRadius, styled } from '@mui/system';
+import dayjs from 'dayjs';
 import {
   Container,
   Grid,
@@ -91,6 +92,10 @@ const AvailabilityDisplay = ({ available, capacity }: { available: number; capac
                   </Typography>
                 </Box>
   );
+
+
+
+
 
 const SuccessModal = ({ open, onClose, onViewTickets }) => {
   return (
@@ -339,6 +344,40 @@ const EventDetails: React.FC = () => {
   const { user } = useAuth();
   const [liked, setLiked] = useState(false);
 
+  const formatDate = (dateString: string) => {
+    const date = dayjs(dateString);
+    return {
+      date: date.format('dddd, MMMM D, YYYY'),
+      time: date.format('h:mm A'),
+    };
+  };
+  const eventDateTime = formatDate();
+
+  const getEventStatus = () => {
+    if (isEventPassed) {
+      return {
+        label: 'Event Ended',
+        color: 'grey.500',
+        disabled: true,
+        message: 'This event has already ended',
+      };
+    }
+    if (isEventSoldOut) {
+      return {
+        label: 'Sold Out',
+        color: 'error.main',
+        disabled: true,
+        message: 'No spots available',
+      };
+    }
+    return {
+      label: 'Reserve Now',
+      color: 'primary.main',
+      disabled: false,
+      message: null,
+    };
+  };
+
   useEffect(() => {
     if (id && events) {
       const found = events.find((ev) => ev.id.toString() === id);
@@ -346,6 +385,7 @@ const EventDetails: React.FC = () => {
     }
   }, [id, events]);
 
+  const isEventPassed = dayjs(event?.startDate).isBefore(dayjs());
   const isEventSoldOut = event?.availableSpots === 0;
 
   if (!event) {
@@ -369,7 +409,12 @@ const EventDetails: React.FC = () => {
 
   return (
     <Box>
-      <StyledHeroImage image={event.coverImageUrl} title={event.name} alt="Event banner" sx={{borderRadius: 2 }} />
+      <StyledHeroImage
+        image={event.coverImageUrl}
+        title={event.name}
+        alt="Event banner"
+        sx={{ borderRadius: 2 }}
+      />
       <Container maxWidth="lg" sx={{ pb: 8 }}>
         <StyledEventCard>
           <Grid container spacing={4}>
@@ -386,7 +431,7 @@ const EventDetails: React.FC = () => {
                 >
                   <Box sx={{ ml: 2 }}>
                     <Typography variant="h6" fontWeight="bold">
-                      {event.organiserName}
+                      Hosted By Abdellah Jouider
                     </Typography>
                   </Box>
                 </Box>
@@ -405,22 +450,138 @@ const EventDetails: React.FC = () => {
                 </Typography>
 
                 <Stack direction="row" spacing={3} sx={{ mb: 4 }}>
-                  <Box>
-                    <Typography variant="overline" color="primary">
-                      Date
-                    </Typography>
-                    <Box display="flex" alignItems="center">
-                      <CalendarToday sx={{ mr: 1, color: 'text.secondary' }} />
-                      <Typography variant="subtitle1">{event.startDate}</Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        textAlign: 'center', // Centrer le contenu
+                      }}
+                    >
+                      <Typography
+                        variant="overline"
+                        sx={{
+                          color: 'text.secondary',
+                          fontSize: '0.75rem',
+                          display: 'block',
+                          mb: 1,
+                        }}
+                      >
+                        Date
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {' '}
+                        {/* Centrer les éléments */}
+                        <CalendarToday
+                          sx={{
+                            color: 'primary.main',
+                            mr: 1.5,
+                            fontSize: '1.25rem',
+                          }}
+                        />
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontWeight: 600,
+                            color: 'text.primary',
+                          }}
+                        >
+                          {eventDateTime.date}
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
-                  <Box>
-                    <Typography variant="overline" color="primary">
-                      Time
-                    </Typography>
-                    <Box display="flex" alignItems="center">
-                      <AccessTime sx={{ mr: 1, color: 'text.secondary' }} />
-                      <Typography variant="subtitle1">{event.startDate}</Typography>
+
+                  <Box sx={{ flex: 1 }}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        textAlign: 'center', // Centrer le contenu
+                      }}
+                    >
+                      <Typography
+                        variant="overline"
+                        sx={{
+                          color: 'text.secondary',
+                          fontSize: '0.75rem',
+                          display: 'block',
+                          mb: 1,
+                        }}
+                      >
+                        Time
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {' '}
+                        {/* Centrer les éléments */}
+                        <AccessTime
+                          sx={{
+                            color: 'primary.main',
+                            mr: 1.5,
+                            fontSize: '1.25rem',
+                          }}
+                        />
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontWeight: 600,
+                            color: 'text.primary',
+                          }}
+                        >
+                          {eventDateTime.time}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ flex: 1 }}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        textAlign: 'center', // Centrer le contenu
+                      }}
+                    >
+                      <Typography
+                        variant="overline"
+                        sx={{
+                          color: 'text.secondary',
+                          fontSize: '0.75rem',
+                          display: 'block',
+                          mb: 1,
+                        }}
+                      >
+                        Location
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {' '}
+                        {/* Centrer les éléments */}
+                        <LocationOn
+                          sx={{
+                            color: 'primary.main',
+                            mr: 1.5,
+                            fontSize: '1.25rem',
+                          }}
+                        />
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontWeight: 600,
+                            color: 'text.primary',
+                          }}
+                        >
+                          {event.location}
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
                 </Stack>
@@ -433,17 +594,17 @@ const EventDetails: React.FC = () => {
                     {event.description}
                   </Typography>
                 </Paper>
-                <Box sx={{ mb: 4 }}>
+                {/* <Box sx={{ mb: 4 }}>
                   <Typography variant="h5" gutterBottom fontWeight="600" color="primary">
                     <LocationOn sx={{ mr: 1, verticalAlign: 'middle' }} />
                     {event.location}
                   </Typography>
-                </Box>
+                </Box> */}
 
                 <Box sx={{ mt: 6 }}>
-                  <Typography variant="h5" gutterBottom fontWeight="600" color="primary">
+                  {/* <Typography variant="h5" gutterBottom fontWeight="600" color="primary">
                     Categories
-                  </Typography>
+                  </Typography> */}
                   {/* <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
                     {event.categories.map((category: string, index: number) => (
                       <Chip
@@ -469,7 +630,7 @@ const EventDetails: React.FC = () => {
               <StickyTicketCard>
                 <Typography variant="h5" gutterBottom fontWeight="600" color="primary">
                   <ConfirmationNumber sx={{ mr: 1, verticalAlign: 'middle' }} />
-                  Get Tickets
+                  {isEventPassed ? 'Event Ended' : 'Get Tickets'}
                 </Typography>
 
                 <Box
@@ -480,15 +641,16 @@ const EventDetails: React.FC = () => {
                     borderRadius: 2,
                     border: '1px solid #e0e0e0',
                     position: 'relative',
+                    opacity: isEventPassed ? 0.7 : 1,
                   }}
                 >
-                  {isEventSoldOut && (
+                  {(isEventSoldOut || isEventPassed) && (
                     <Box
                       sx={{
                         position: 'absolute',
                         top: 16,
                         right: 16,
-                        bgcolor: 'error.main',
+                        bgcolor: isEventPassed ? 'grey.500' : 'error.main',
                         color: 'white',
                         px: 2,
                         py: 0.5,
@@ -497,7 +659,7 @@ const EventDetails: React.FC = () => {
                         fontWeight: 600,
                       }}
                     >
-                      Sold Out
+                      {isEventPassed ? 'Event Ended' : 'Sold Out'}
                     </Box>
                   )}
 
@@ -505,16 +667,15 @@ const EventDetails: React.FC = () => {
                     Standard
                   </Typography>
 
-                  <AvailabilityDisplay
-                    available={event.availableSpots}
-                    capacity={event.capacity}
-                  />
+                  <AvailabilityDisplay available={event.availableSpots} capacity={event.capacity} />
 
                   <Typography
                     variant="body2"
                     sx={{
                       mt: 1,
-                      color: isEventSoldOut
+                      color: isEventPassed
+                        ? 'grey.500'
+                        : isEventSoldOut
                         ? 'error.main'
                         : event.availableSpots < 10
                         ? 'warning.main'
@@ -522,42 +683,72 @@ const EventDetails: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    {isEventSoldOut
+                    {isEventPassed
+                      ? 'This event has ended'
+                      : isEventSoldOut
                       ? 'Sold Out'
                       : event.availableSpots < 10
                       ? `Only ${event.availableSpots} spots left!`
                       : `${event.availableSpots} spots available`}
                   </Typography>
+
                   {(!user?.id || user.id !== event.organizerId) && (
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      disabled={isEventSoldOut}
-                      onClick={handleReserveClick}
-                      sx={{
-                        mt: 2,
-                        py: 1.5,
-                        borderRadius: 2,
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        backgroundColor: isEventSoldOut ? 'grey.300' : 'primary.main',
-                        '&:hover': {
-                          backgroundColor: isEventSoldOut ? 'grey.300' : 'primary.dark',
-                        },
-                      }}
-                    >
-                      {isEventSoldOut ? 'Sold Out' : 'Reserve Now'}
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        disabled={isEventSoldOut || isEventPassed}
+                        onClick={handleReserveClick}
+                        sx={{
+                          mt: 2,
+                          py: 1.5,
+                          borderRadius: 2,
+                          textTransform: 'none',
+                          fontSize: '1.1rem',
+                          backgroundColor: isEventPassed
+                            ? 'grey.300'
+                            : isEventSoldOut
+                            ? 'grey.300'
+                            : 'primary.main',
+                          '&:hover': {
+                            backgroundColor:
+                              isEventPassed || isEventSoldOut ? 'grey.300' : 'primary.dark',
+                          },
+                        }}
+                      >
+                        {getEventStatus().label}
+                      </Button>
+                      {isEventPassed && (
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: 'block',
+                            textAlign: 'center',
+                            mt: 1,
+                            color: 'text.secondary',
+                          }}
+                        >
+                          This event took place on {dayjs(event.startDate).format('MMMM D, YYYY')}
+                        </Typography>
+                      )}
+                    </>
                   )}
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3 }}>
                   <IconButton
                     onClick={() => setLiked(!liked)}
+                    disabled={isEventPassed}
+                    sx={{ opacity: isEventPassed ? 0.5 : 1 }}
                   >
                     <Favorite />
                   </IconButton>
-                  <IconButton sx={{ '&:hover': { color: '#1976d2' } }}>
+                  <IconButton
+                    sx={{
+                      '&:hover': { color: '#1976d2' },
+                      opacity: isEventPassed ? 0.5 : 1,
+                    }}
+                  >
                     <Share />
                   </IconButton>
                 </Box>

@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
         height: '400px',
         position: 'relative',
         overflow: 'hidden',
-        margin:4 , // Ajout de margin autour du slider
+        margin: 4, // Ajout de margin autour du slider
       }}
     >
       {images.map((image, index) => (

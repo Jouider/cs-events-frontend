@@ -14,25 +14,20 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Avatar,
 } from '@mui/material';
 import {
   ConfirmationNumber,
-  Event,
   AccessTime,
   LocationOn,
   Delete,
   QrCode2,
   CalendarMonth,
-  ArrowForward,
 } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import useBookings from '@modules/bookings/hooks/api/useBookings';
 import { useSnackbar } from 'notistack';
 import dayjs from 'dayjs';
-import Link from 'next/link';
 import ConfirmDialog from '@common/components/lib/feedbacks/ConfirmDialog';
-import LoadingScreen from '@common/components/lib/feedbacks/LoadingScreen';
 import useProgressBar from '@common/hooks/useProgressBar';
 import BookingCardSkeleton from '@modules/bookings/components/BookingCardSkeleton';
 import withAuth, { AUTH_MODE } from '@modules/auth/hocs/withAuth';
@@ -72,10 +67,9 @@ const DateChip = styled(Box)(({ theme }) => ({
 }));
 
 const BookingsPage = () => {
-  const { items: bookings, deleteOne} = useBookings({ fetchItems: true });
+  const { items: bookings, deleteOne } = useBookings({ fetchItems: true });
   const { enqueueSnackbar } = useSnackbar();
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
   const [bookingToDelete, setBookingToDelete] = useState<number | null>(null);
   const { start, stop } = useProgressBar();
 
@@ -84,7 +78,9 @@ const BookingsPage = () => {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!bookingToDelete) return;
+    if (!bookingToDelete) {
+      return;
+    }
 
     try {
       start();
@@ -105,27 +101,29 @@ const BookingsPage = () => {
           {/* <Skeleton variant="text" width={300} height={40} />
           <Skeleton variant="text" width={200} height={24} /> */}
         </Box>
-      <Grid container spacing={3}>
+        <Grid container spacing={3}>
           {[1, 2, 3, 4, 5, 6].map((index) => (
             <Grid item xs={12} md={6} lg={4} key={index}>
               <BookingCardSkeleton />
             </Grid>
-        ))}
-      </Grid>
-    </Container>
-  );
+          ))}
+        </Grid>
+      </Container>
+    );
   }
 
   if (!bookings?.length) {
     return (
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box sx={{ 
-          textAlign: 'center', 
-          py: 8, 
-          backgroundColor: 'rgba(0,0,0,0.02)',
-          borderRadius: 4,
-          border: '1px dashed rgba(0,0,0,0.1)'
-        }}>
+        <Box
+          sx={{
+            textAlign: 'center',
+            py: 8,
+            backgroundColor: 'rgba(0,0,0,0.02)',
+            borderRadius: 4,
+            border: '1px dashed rgba(0,0,0,0.1)',
+          }}
+        >
           <ConfirmationNumber sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h5" gutterBottom>
             No Bookings Found
@@ -133,15 +131,15 @@ const BookingsPage = () => {
           <Typography color="text.secondary" sx={{ mb: 3 }}>
             You haven't made any bookings yet.
           </Typography>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             href="/events"
-            sx={{ 
+            sx={{
               borderRadius: 2,
               px: 4,
               py: 1.5,
               textTransform: 'none',
-              fontSize: '1.1rem'
+              fontSize: '1.1rem',
             }}
           >
             Browse Events
@@ -156,9 +154,7 @@ const BookingsPage = () => {
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
           My Bookings
         </Typography>
-        <Typography color="text.secondary">
-          Manage your event bookings and tickets
-        </Typography>
+        <Typography color="text.secondary">Manage your event bookings and tickets</Typography>
       </Box>
 
       <Grid container spacing={3}>
@@ -167,7 +163,10 @@ const BookingsPage = () => {
             <StyledCard>
               <Box sx={{ position: 'relative' }}>
                 <EventImage
-                  src={booking.event.coverImageUrl || "https://source.unsplash.com/random/400x200/?event"}
+                  src={
+                    booking.event.coverImageUrl ||
+                    'https://source.unsplash.com/random/400x200/?event'
+                  }
                   alt={booking.event.name}
                 />
                 <DateChip>
@@ -189,7 +188,7 @@ const BookingsPage = () => {
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
                     lineHeight: 1.3,
-                    height: '2.6em'
+                    height: '2.6em',
                   }}
                 >
                   {booking.event.name}
@@ -210,10 +209,10 @@ const BookingsPage = () => {
                       sx={{
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      {booking.event.location}
+                      {String(booking.event.location)}
                     </Typography>
                   </Box>
                 </Stack>
@@ -231,10 +230,7 @@ const BookingsPage = () => {
                     color="primary"
                     size="small"
                   />
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Booking #{booking.id}
                   </Typography>
                 </Stack>
@@ -247,18 +243,18 @@ const BookingsPage = () => {
                     onClick={() => setQrDialogOpen(true)}
                     sx={{
                       borderRadius: 2,
-                      textTransform: 'none'
+                      textTransform: 'none',
                     }}
                   >
                     View Ticket
                   </Button>
                   <IconButton
                     color="error"
-                    onClick={() => handleDeleteClick(booking.id)}
+                    onClick={() => handleDeleteClick(Number(booking.id))}
                     sx={{
                       border: '1px solid',
                       borderColor: 'divider',
-                      borderRadius: 2
+                      borderRadius: 2,
                     }}
                   >
                     <Delete />
@@ -270,15 +266,8 @@ const BookingsPage = () => {
         ))}
       </Grid>
 
-      <Dialog
-        open={qrDialogOpen}
-        onClose={() => setQrDialogOpen(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle sx={{ textAlign: 'center' }}>
-          Your Ticket QR Code
-        </DialogTitle>
+      <Dialog open={qrDialogOpen} onClose={() => setQrDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ textAlign: 'center' }}>Your Ticket QR Code</DialogTitle>
         <DialogContent sx={{ textAlign: 'center', py: 4 }}>
           <QrCode2 sx={{ fontSize: 180, color: 'primary.main' }} />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
@@ -293,11 +282,7 @@ const BookingsPage = () => {
           >
             Close
           </Button>
-          <Button
-            variant="contained"
-            onClick={() => window.print()}
-            sx={{ borderRadius: 2 }}
-          >
+          <Button variant="contained" onClick={() => window.print()} sx={{ borderRadius: 2 }}>
             Download
           </Button>
         </DialogActions>
@@ -318,13 +303,16 @@ const BookingsPage = () => {
                   Booking Details:
                 </Typography>
                 <Typography variant="body2">
-                  Event: {bookings.find(b => b.id === bookingToDelete)?.event.name}
+                  Event: {bookings.find((b) => Number(b.id) === bookingToDelete)?.event.name}
                 </Typography>
                 <Typography variant="body2">
-                  Date: {dayjs(bookings.find(b => b.id === bookingToDelete)?.event.startDate).format('MMM D, YYYY')}
+                  Date:{' '}
+                  {dayjs(
+                    bookings.find((b) => Number(b.id) === bookingToDelete)?.event.startDate
+                  ).format('MMM D, YYYY')}
                 </Typography>
                 <Typography variant="body2">
-                  Spots: {bookings.find(b => b.id === bookingToDelete)?.spots}
+                  Spots: {bookings.find((b) => String(b.id) === String(bookingToDelete))?.spots}
                 </Typography>
               </Box>
             )}
@@ -342,7 +330,6 @@ const BookingsPage = () => {
             </Button>
           </Stack>
         }
-        
       />
     </Container>
   );

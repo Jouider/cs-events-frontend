@@ -5,7 +5,7 @@ import Bookings from '@modules/bookings/defs/namespace';
 const Namespaces = {
   Users,
   Events,
-  Bookings
+  Bookings,
 };
 
 export default Namespaces;

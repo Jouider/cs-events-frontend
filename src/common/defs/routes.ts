@@ -15,7 +15,7 @@ const Routes = {
   Permissions,
   Users,
   Events,
-  Bookings
+  Bookings,
 };
 
 export default Routes;

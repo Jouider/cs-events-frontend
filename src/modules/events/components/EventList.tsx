@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Grid, TextField, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import EventCard from './EventCard';
@@ -79,10 +74,7 @@ const EventList: React.FC = () => {
         <Grid container spacing={3}>
           {filteredEvents.map((event: Event) => (
             <Grid item xs={12} sm={6} md={3} key={event.id}>
-              <EventCard
-                event={event}
-                onClick={() => router.push(`/events/${event.id}`)}
-              />
+              <EventCard event={event} onClick={() => router.push(`/events/${event.id}`)} />
             </Grid>
           ))}
         </Grid>

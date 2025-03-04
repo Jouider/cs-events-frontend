@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { borderRadius, styled } from '@mui/system';
 import dayjs from 'dayjs';
 import {
   Container,
@@ -12,24 +10,18 @@ import {
   Box,
   Button,
   IconButton,
-  Chip,
   Paper,
-  Avatar,
   Stack,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
-  Alert,
   Slider,
   InputAdornment,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import {
   CalendarToday,
   AccessTime,
@@ -38,6 +30,7 @@ import {
   Favorite,
   ConfirmationNumber,
   Groups,
+  CheckCircle,
 } from '@mui/icons-material';
 import { Event } from '@modules/events/defs/types';
 import useEvents from '@modules/events/hooks/api/useEvents';
@@ -45,9 +38,22 @@ import useAuth from '@modules/auth/hooks/api/useAuth';
 import useBookings from '@modules/bookings/hooks/api/useBookings';
 import { useSnackbar } from 'notistack';
 import Routes from '@common/defs/routes';
-import { CheckCircle } from '@mui/icons-material';
+// Add these interfaces at the top of the file
+interface SuccessModalProps {
+  open: boolean;
+  onClose: () => void;
+  onViewTickets: () => void;
+}
 
-const StyledHeroImage = styled(CardMedia)(({ theme }) => ({
+interface ReservationModalProps {
+  open: boolean;
+  onClose: () => void;
+  event: Event;
+  maxSpots?: number;
+  availableSpots: number;
+}
+
+const StyledHeroImage = styled(CardMedia)(() => ({
   height: '600px',
   position: 'relative',
   borderRadius: '0',
@@ -56,7 +62,7 @@ const StyledHeroImage = styled(CardMedia)(({ theme }) => ({
   transition: 'all 0.3s ease',
 }));
 
-const StyledEventCard = styled(Box)(({ theme }) => ({
+const StyledEventCard = styled(Box)(() => ({
   marginTop: '-150px',
   position: 'relative',
   zIndex: 1,
@@ -76,7 +82,7 @@ const AvailabilityDisplay = ({ available, capacity }: { available: number; capac
       variant="h4"
       sx={{
         color: 'text.secondary',
-        fontWeight: 700
+        fontWeight: 700,
       }}
     >
       {available}
@@ -85,36 +91,32 @@ const AvailabilityDisplay = ({ available, capacity }: { available: number; capac
       variant="h4"
       color="primary"
       sx={{
-        fontWeight: 700
+        fontWeight: 700,
       }}
     >
       / {capacity}
-                  </Typography>
-                </Box>
-  );
+    </Typography>
+  </Box>
+);
 
-
-
-
-
-const SuccessModal = ({ open, onClose, onViewTickets }) => {
+const SuccessModal = ({ open, onClose, onViewTickets }: SuccessModalProps) => {
   return (
-    <Dialog 
-      open={open} 
-      maxWidth="sm" 
-                      fullWidth
+    <Dialog
+      open={open}
+      maxWidth="sm"
+      fullWidth
       PaperProps={{
         sx: {
           borderRadius: 3,
           textAlign: 'center',
           p: 2,
-                      },
-                      }}
-                    >
+        },
+      }}
+    >
       <DialogContent>
         <Box sx={{ py: 3 }}>
           <Box
-                    sx={{
+            sx={{
               width: 80,
               height: 80,
               borderRadius: '50%',
@@ -131,15 +133,16 @@ const SuccessModal = ({ open, onClose, onViewTickets }) => {
                 fontSize: 40,
                 color: 'success.main',
               }}
-      />
-    </Box>
+            />
+          </Box>
 
           <Typography variant="h5" gutterBottom fontWeight="bold">
             Booking Confirmed!
           </Typography>
-          
+
           <Typography color="text.secondary" sx={{ mb: 4 }}>
-            Your reservation has been successfully completed. You can view your tickets in the bookings section.
+            Your reservation has been successfully completed. You can view your tickets in the
+            bookings section.
           </Typography>
 
           <Stack direction="row" spacing={2} justifyContent="center">
@@ -173,21 +176,26 @@ const SuccessModal = ({ open, onClose, onViewTickets }) => {
   );
 };
 
-const ReservationModal = ({ 
-  open, 
-  onClose, 
-  event, 
+const ReservationModal = ({
+  open,
+  onClose,
+  event,
   maxSpots = 10,
   availableSpots,
-}) => {
+}: ReservationModalProps) => {
   const [spots, setSpots] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const { createOne } = useBookings();
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
+  const { user } = useAuth();
 
-  const handleSpotChange = (event: Event, newValue: number | number[]) => {
+  const handleSpotChange = (
+    _event: React.SyntheticEvent | Event,
+    newValue: number | number[],
+    _activeThumb: number
+  ) => {
     setSpots(newValue as number);
   };
 
@@ -196,7 +204,8 @@ const ReservationModal = ({
       setLoading(true);
       await createOne({
         eventId: event.id,
-        spots: spots,
+        spots,
+        userId: user!.id,
       });
       setShowSuccess(true);
       onClose();
@@ -216,20 +225,11 @@ const ReservationModal = ({
 
   return (
     <>
-      <Dialog 
-        open={open} 
-        onClose={() => !loading && onClose()}
-        maxWidth="sm" 
-        fullWidth
-      >
-        <DialogTitle>
-          Reserve Spots for {event.name}
-        </DialogTitle>
+      <Dialog open={open} onClose={() => !loading && onClose()} maxWidth="sm" fullWidth>
+        <DialogTitle>Reserve Spots for {event.name}</DialogTitle>
         <DialogContent>
           <Box sx={{ py: 2 }}>
-            <Typography gutterBottom>
-              Select number of spots (Maximum {maxAllowedSpots})
-            </Typography>
+            <Typography gutterBottom>Select number of spots (Maximum {maxAllowedSpots})</Typography>
             <Slider
               value={spots}
               onChange={handleSpotChange}
@@ -239,6 +239,7 @@ const ReservationModal = ({
               valueLabelDisplay="auto"
               sx={{ mt: 4 }}
               disabled={loading}
+              aria-label="Number of spots"
             />
             <TextField
               fullWidth
@@ -271,17 +272,23 @@ const ReservationModal = ({
               </Typography>
               <Stack spacing={1}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" color="text.secondary">Event:</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Event:
+                  </Typography>
                   <Typography variant="body2">{event.name}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" color="text.secondary">Date:</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Date:
+                  </Typography>
                   <Typography variant="body2">
                     {new Date(event.startDate).toLocaleDateString()}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" color="text.secondary">Spots:</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Spots:
+                  </Typography>
                   <Typography variant="body2">{spots}</Typography>
                 </Box>
               </Stack>
@@ -289,12 +296,7 @@ const ReservationModal = ({
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
-          <Button
-            onClick={onClose}
-            disabled={loading}
-            variant="outlined"
-            sx={{ borderRadius: 2 }}
-          >
+          <Button onClick={onClose} disabled={loading} variant="outlined" sx={{ borderRadius: 2 }}>
             Cancel
           </Button>
           <Button
@@ -304,7 +306,7 @@ const ReservationModal = ({
             sx={{
               borderRadius: 2,
               minWidth: 120,
-              position: 'relative'
+              position: 'relative',
             }}
           >
             {loading ? (
@@ -314,7 +316,7 @@ const ReservationModal = ({
                   sx={{
                     position: 'absolute',
                     left: '50%',
-                    marginLeft: '-12px'
+                    marginLeft: '-12px',
                   }}
                 />
                 <span style={{ opacity: 0 }}>Confirm</span>
@@ -351,7 +353,7 @@ const EventDetails: React.FC = () => {
       time: date.format('h:mm A'),
     };
   };
-  const eventDateTime = formatDate();
+  const eventDateTime = formatDate(event?.startDate || '');
 
   const getEventStatus = () => {
     if (isEventPassed) {
@@ -407,14 +409,40 @@ const EventDetails: React.FC = () => {
     setReservationModalOpen(true);
   };
 
+  const getButtonBackgroundColor = () => {
+    if (isEventPassed || isEventSoldOut) {
+      return 'grey.300';
+    }
+    return 'primary.main';
+  };
+
+  const getStatusText = () => {
+    if (isEventPassed) {
+      return 'This event has ended';
+    }
+    if (isEventSoldOut) {
+      return 'Sold Out';
+    }
+    if ((event.availableSpots ?? 0) < 10) {
+      return `Only ${event.availableSpots ?? 0} spots left!`;
+    }
+    return `${event.availableSpots ?? 0} spots available`;
+  };
+
+  // Add this helper function before the return statement
+  const getStatusColor = () => {
+    if (isEventPassed) {
+      return 'grey.500';
+    }
+    if (isEventSoldOut) {
+      return 'error.main';
+    }
+    return 'success.main';
+  };
+
   return (
     <Box>
-      <StyledHeroImage
-        image={event.coverImageUrl}
-        title={event.name}
-        alt="Event banner"
-        sx={{ borderRadius: 2 }}
-      />
+      <StyledHeroImage image={event.coverImageUrl} title={event.name} sx={{ borderRadius: 2 }} />
       <Container maxWidth="lg" sx={{ pb: 8 }}>
         <StyledEventCard>
           <Grid container spacing={4}>
@@ -579,7 +607,7 @@ const EventDetails: React.FC = () => {
                             color: 'text.primary',
                           }}
                         >
-                          {event.location}
+                          {String(event.location)}
                         </Typography>
                       </Box>
                     </Box>
@@ -667,29 +695,20 @@ const EventDetails: React.FC = () => {
                     Standard
                   </Typography>
 
-                  <AvailabilityDisplay available={event.availableSpots} capacity={event.capacity} />
+                  <AvailabilityDisplay
+                    available={event.availableSpots ?? 0}
+                    capacity={event.capacity ?? 0}
+                  />
 
                   <Typography
                     variant="body2"
                     sx={{
                       mt: 1,
-                      color: isEventPassed
-                        ? 'grey.500'
-                        : isEventSoldOut
-                        ? 'error.main'
-                        : event.availableSpots < 10
-                        ? 'warning.main'
-                        : 'success.main',
+                      color: getStatusColor(),
                       fontWeight: 600,
                     }}
                   >
-                    {isEventPassed
-                      ? 'This event has ended'
-                      : isEventSoldOut
-                      ? 'Sold Out'
-                      : event.availableSpots < 10
-                      ? `Only ${event.availableSpots} spots left!`
-                      : `${event.availableSpots} spots available`}
+                    {getStatusText()}
                   </Typography>
 
                   {(!user?.id || user.id !== event.organizerId) && (
@@ -705,14 +724,9 @@ const EventDetails: React.FC = () => {
                           borderRadius: 2,
                           textTransform: 'none',
                           fontSize: '1.1rem',
-                          backgroundColor: isEventPassed
-                            ? 'grey.300'
-                            : isEventSoldOut
-                            ? 'grey.300'
-                            : 'primary.main',
+                          backgroundColor: getButtonBackgroundColor(),
                           '&:hover': {
-                            backgroundColor:
-                              isEventPassed || isEventSoldOut ? 'grey.300' : 'primary.dark',
+                            backgroundColor: getButtonBackgroundColor(),
                           },
                         }}
                       >
@@ -763,7 +777,7 @@ const EventDetails: React.FC = () => {
         onClose={() => setReservationModalOpen(false)}
         event={event}
         maxSpots={10}
-        availableSpots={event.availableSpots}
+        availableSpots={event.availableSpots ?? 0}
       />
     </Box>
   );

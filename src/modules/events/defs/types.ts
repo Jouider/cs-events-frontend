@@ -1,7 +1,3 @@
-import { CrudObject, Id } from '@common/defs/types';
-import { User } from '@modules/users/defs/types';
-
-
 import { SvgIconComponent } from '@mui/icons-material';
 
 export interface Category {

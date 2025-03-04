@@ -16,13 +16,8 @@ const EventFilter: React.FC<EventFilterProps> = ({ filter, onFilterChange }) => 
   };
 
   return (
-    <Box sx={{ mb: 3,mt: 10}}>
-      <ToggleButtonGroup
-        value={filter}
-        exclusive
-        onChange={handleChange}
-        aria-label="event filter"
-      >
+    <Box sx={{ mb: 3, mt: 10 }}>
+      <ToggleButtonGroup value={filter} exclusive onChange={handleChange} aria-label="event filter">
         <ToggleButton value="all" aria-label="all events">
           All
         </ToggleButton>

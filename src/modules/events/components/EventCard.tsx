@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardMedia, Typography, Button, Box } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
 import { Event } from '@modules/events/defs/types';
 
 interface EventCardProps {
@@ -52,7 +52,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
       </Box>
       <CardContent>
         <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-          {event.location}
+          {event.location.toString()}
         </Typography>
         <Typography variant="h5" component="div" className="cardTitle">
           {event.name}
@@ -60,9 +60,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
         <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
           HOSTED BY : abdellah jouider
         </Typography>
-        <Typography variant="body2">
-          {new Date(event.startDate).toLocaleDateString()}
-        </Typography>
+        <Typography variant="body2">{new Date(event.startDate).toLocaleDateString()}</Typography>
       </CardContent>
     </Card>
   );

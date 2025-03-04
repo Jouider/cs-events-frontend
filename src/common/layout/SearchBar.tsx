@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled, alpha } from '@mui/material/styles';
-import { InputBase, Box, Typography, Divider } from '@mui/material';
-import { Search as SearchIcon, LocationOn } from '@mui/icons-material';
+import { InputBase, Divider } from '@mui/material';
+import { Search as SearchIcon } from '@mui/icons-material';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -45,10 +45,7 @@ const SearchBar = () => {
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
-      <StyledInputBase
-        placeholder="Search events"
-        inputProps={{ 'aria-label': 'search' }}
-      />
+      <StyledInputBase placeholder="Search events" inputProps={{ 'aria-label': 'search' }} />
       <Divider orientation="vertical" flexItem />
     </Search>
   );

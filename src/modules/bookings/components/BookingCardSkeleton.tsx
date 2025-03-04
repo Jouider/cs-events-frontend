@@ -13,19 +13,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const BookingCardSkeleton = () => {
   return (
     <StyledCard>
-      <Skeleton 
-        variant="rectangular" 
-        height={200}
-        animation="wave"
-      />
+      <Skeleton variant="rectangular" height={200} animation="wave" />
       <Box sx={{ p: 3 }}>
-        <Skeleton 
-          variant="text" 
-          height={32} 
-          width="80%" 
-          sx={{ mb: 2 }}
-          animation="wave"
-        />
+        <Skeleton variant="text" height={32} width="80%" sx={{ mb: 2 }} animation="wave" />
 
         <Stack spacing={2} sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -40,30 +30,25 @@ const BookingCardSkeleton = () => {
 
         <Divider sx={{ my: 2 }} />
 
-        <Stack 
-          direction="row" 
-          justifyContent="space-between" 
-          alignItems="center"
-          sx={{ mb: 2 }}
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <Skeleton variant="rectangular" width={80} height={24} animation="wave" />
           <Skeleton variant="text" width={100} height={24} animation="wave" />
         </Stack>
 
         <Stack direction="row" spacing={1}>
-          <Skeleton 
-            variant="rectangular" 
-            height={40} 
-            sx={{ 
+          <Skeleton
+            variant="rectangular"
+            height={40}
+            sx={{
               flexGrow: 1,
-              borderRadius: 2
+              borderRadius: 2,
             }}
             animation="wave"
           />
-          <Skeleton 
-            variant="rectangular" 
-            width={40} 
-            height={40} 
+          <Skeleton
+            variant="rectangular"
+            width={40}
+            height={40}
             sx={{ borderRadius: 2 }}
             animation="wave"
           />

@@ -1,5 +1,4 @@
 import ApiRoutes from '@common/defs/api-routes';
-import { ROLE } from '@modules/permissions/defs/types';
 import { Event } from '@modules/events/defs/types';
 import useItems, { UseItemsOptions, defaultOptions } from '@common/hooks/useItems';
 
@@ -11,7 +10,7 @@ export interface CreateOneInput {
   endDate: Date;
   location: string;
   capacity: number;
-  coverImageUrl?: File | null;
+  coverImageUrl: File | null;
 }
 
 export interface UpdateOneInput {
@@ -25,12 +24,12 @@ export interface UpdateOneInput {
   coverImageUrl?: File | null;
 }
 
-export type UpsertOneInput = CreateOneInput | UpdateOneInput; 
+export type UpsertOneInput = CreateOneInput | UpdateOneInput;
 
-function useEvents(opts: UseItemsOptions = defaultOptions) {
+const useEvents = (opts: UseItemsOptions = defaultOptions) => {
   const apiRoutes = ApiRoutes.Events;
   const itemsHook = useItems<Event, CreateOneInput, UpdateOneInput>(apiRoutes, opts);
   return itemsHook;
-}
+};
 
 export default useEvents;

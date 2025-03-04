@@ -1,5 +1,4 @@
 import ApiRoutes from '@common/defs/api-routes';
-import { ROLE } from '@modules/permissions/defs/types';
 import { Booking } from '@modules/bookings/defs/types';
 import useItems, { UseItemsOptions, defaultOptions } from '@common/hooks/useItems';
 import { Id } from '@common/defs/types';
@@ -7,7 +6,7 @@ import { Id } from '@common/defs/types';
 export interface CreateOneInput {
   userId: Id;
   eventId: Id;
-  spots:number;
+  spots: number;
 }
 export interface UpdateOneInput {
   userId: Id;
@@ -16,10 +15,10 @@ export interface UpdateOneInput {
 }
 export type UpsertOneInput = CreateOneInput | UpdateOneInput;
 
-function useBookings(opts: UseItemsOptions = defaultOptions) {
+const useBookings = (opts: UseItemsOptions = defaultOptions) => {
   const apiRoutes = ApiRoutes.Bookings;
   const itemsHook = useItems<Booking, CreateOneInput, UpdateOneInput>(apiRoutes, opts);
   return itemsHook;
-}
+};
 
 export default useBookings;

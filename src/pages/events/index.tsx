@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container } from '@mui/material';
 import EventList from '@modules/events/components/EventList';
 import Hero from '@modules/events/components/Hero';
 import CategorySelection from '@modules/events/components/CategorySelection';
-import { categories } from '@modules/events/data/categories';
 import { Category } from '@modules/events/defs/types';
-
+import { categories } from '@modules/events/data/categories';
 
 const EventsPage: React.FC = () => {
   const handleCategorySelect = (category: Category) => {
@@ -19,7 +18,7 @@ const EventsPage: React.FC = () => {
         <CategorySelection categories={categories} onSelectCategory={handleCategorySelect} />
       </Container>
       <Container maxWidth="lg">
-        <EventList/>
+        <EventList />
       </Container>
     </>
   );

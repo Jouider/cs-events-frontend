@@ -1,11 +1,7 @@
 import { Box, Container, Stack, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  LinkedIn,
-} from '@mui/icons-material';
+import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
+
 const StyledFooter = styled('footer')(({ theme }) => ({
   backgroundColor: '#1E0A3C',
   color: '#FFFFFF',
@@ -15,10 +11,10 @@ const StyledFooter = styled('footer')(({ theme }) => ({
 
 const SocialButton = styled(IconButton)(({ theme }) => ({
   color: '#FFFFFF',
-                    '&:hover': {
+  '&:hover': {
     color: theme.palette.primary.main,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    },
+  },
 }));
 
 const Footer = () => {
@@ -47,15 +43,17 @@ const Footer = () => {
           </Typography>
           <Stack direction="row" spacing={1}>
             {socialLinks.map(({ Icon, href }, index) => (
-              <SocialButton
+              <a
                 key={index}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                size="small"
+                style={{ textDecoration: 'none' }}
               >
-                <Icon fontSize="small" />
-              </SocialButton>
+                <SocialButton size="small">
+                  <Icon fontSize="small" />
+                </SocialButton>
+              </a>
             ))}
           </Stack>
         </Box>

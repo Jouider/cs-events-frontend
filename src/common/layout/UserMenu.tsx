@@ -24,11 +24,7 @@ const UserMenu: React.FC = () => {
       <IconButton onClick={handleClick}>
         <StyledAvatar alt="User" src="/path-to-user-image.jpg" />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         <MenuItem onClick={handleClose}>My Events</MenuItem>
         <MenuItem onClick={handleClose}>Edit Profile</MenuItem>
         <MenuItem onClick={handleClose}>Log out</MenuItem>

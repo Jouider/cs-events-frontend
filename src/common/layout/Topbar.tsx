@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Button, 
-  IconButton, 
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
   Box,
   Container,
-  InputBase,
   Stack,
   Menu,
   MenuItem,
@@ -23,21 +21,17 @@ import {
   ListItemAvatar,
   Popover,
 } from '@mui/material';
-import { styled, alpha } from '@mui/system';
+import { styled } from '@mui/system';
 import {
-  Search as SearchIcon,
-  LocationOn,
+  Search as _SearchIcon,
   KeyboardArrowDown,
   HelpOutline,
   ConfirmationNumber,
   NotificationsNone,
-  AccountCircle,
   Settings,
   Logout,
   Person,
   EventNote,
-  PlusOne,
-  HdrPlus,
   Event,
 } from '@mui/icons-material';
 import useAuth from '@modules/auth/hooks/api/useAuth';
@@ -65,46 +59,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'fixed',
 }));
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: '4px',
-  border: '2px solid #DBDAE3',
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  marginRight: theme.spacing(2),
-  marginLeft: theme.spacing(3),
-  width: '100%',
-  maxWidth: '800px',
-  display: 'flex',
-  '&:hover': {
-    borderColor: '#A9A8B3',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '#6F7287',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: '#1E0A3C',
-  width: '100%',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1.5, 1.5, 1.5, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    width: '100%',
-    '&::placeholder': {
-      color: '#6F7287',
-    },
-  },
-}));
-
-const NavButton = styled(Button)(({ theme }) => ({
+const NavButton = styled(Button)(() => ({
   color: '#1E0A3C',
   textTransform: 'none',
   padding: '8px 12px',
@@ -114,23 +69,13 @@ const NavButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const CreateEventButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#D1410C',
-  color: '#FFFFFF',
-  textTransform: 'none',
-  padding: '8px 16px',
-  '&:hover': {
-    backgroundColor: '#B23509',
-  },
-}));
-
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   width: 35,
   height: 35,
-                cursor: 'pointer',
+  cursor: 'pointer',
   border: '2px solid transparent',
   transition: 'all 0.2s ease',
-                      '&:hover': {
+  '&:hover': {
     borderColor: theme.palette.primary.main,
   },
 }));
@@ -164,20 +109,20 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-const NotificationItem = styled(ListItem)(({ theme }) => ({
+const NotificationItem = styled(ListItem)(() => ({
   padding: '16px',
   borderBottom: '1px solid rgba(0,0,0,0.1)',
-                      '&:hover': {
+  '&:hover': {
     backgroundColor: 'rgba(30, 10, 60, 0.04)',
-                      },
+  },
   cursor: 'pointer',
 }));
 
-const NotificationBadge = styled(Badge)(({ theme }) => ({
+const NotificationBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     backgroundColor: '#D1410C',
     color: 'white',
-                },
+  },
 }));
 
 const Topbar: React.FC = () => {
@@ -192,23 +137,26 @@ const Topbar: React.FC = () => {
     if (user) {
       const pusher = new Pusher('59f0dfc0bca12de4cbfe', {
         cluster: 'eu',
-        encrypted: true,
+        forceTLS: true,
       });
 
       const channel = pusher.subscribe(`private.user.${user.id}`);
-      
+
       channel.bind('booking.created', (data: Notification) => {
-        setNotifications(prev => [{
-          ...data,
-          read: false,
-          created_at: new Date().toISOString()
-        }, ...prev]);
+        setNotifications((prev) => [
+          {
+            ...data,
+            read: false,
+            created_at: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
       });
 
       return () => {
         channel.unbind_all();
         channel.unsubscribe();
-};
+      };
     }
   }, [user]);
 
@@ -245,8 +193,8 @@ const Topbar: React.FC = () => {
   const handleNotificationItemClick = (notification: Notification) => {
     router.push(`/events/${notification.event_id}`);
     handleNotificationClose();
-    setNotifications(prev =>
-      prev.map(n => n.id === notification.id ? { ...n, read: true } : n)
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notification.id ? { ...n, read: true } : n))
     );
   };
 
@@ -260,7 +208,7 @@ const Topbar: React.FC = () => {
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <>

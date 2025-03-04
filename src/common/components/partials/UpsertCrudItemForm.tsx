@@ -14,8 +14,6 @@ import { Any, AnyObject, CrudObject, CrudAppRoutes } from '@common/defs/types';
 import { ItemResponse, UseItems } from '@common/hooks/useItems';
 import { useSnackbar } from 'notistack';
 import { Tab, Tabs } from '@mui/material';
-import useUploads from '@modules/uploads/hooks/api/useUploads';
-import { useUploadFormContext } from '@common/contexts/UploadFormContext';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
@@ -94,7 +92,6 @@ const UpsertCrudItemForm = <
   ref: Ref<CurrentFormStepRef | undefined>
 ) => {
   const {
-    item,
     routes,
     useItems,
     schema,
@@ -103,23 +100,17 @@ const UpsertCrudItemForm = <
     tabs,
     mode = FORM_MODE.CREATE,
     onPreSubmit,
-    onPostSubmit,
   } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [loaded, setLoaded] = useState(false);
   const router = useRouter();
-  const { createOne, updateOne, patchOne } = useItems();
-  const { createOne: createOneUpload, updateOne: updateOneUpload, deleteMulti } = useUploads();
+  const { createOne } = useItems();
   const [previousData, setPreviousData] = useState<CreateOneInput | UpdateOneInput>();
   const methods = useForm<CreateOneInput | UpdateOneInput>({
     resolver: yupResolver(schema),
     defaultValues: defaultValues as DefaultValues<CreateOneInput | UpdateOneInput>,
   });
   const [currentTab, setCurrentTab] = useState(tabs?.formItem);
-  const { uploadsIdsToDelete, filesToUpload } = useUploadFormContext() ?? {
-    uploadsIdsToDelete: [],
-    filesToUpload: [],
-  };
 
   const { t } = useTranslation(['common']);
 
@@ -145,34 +136,35 @@ const UpsertCrudItemForm = <
   }, [data]);
 
   const onSubmit = async (data: CreateOneInput | UpdateOneInput) => {
-    console.log('Form submission started', data);  // Add this line
+    console.log('Form submission started', data); // Add this line
 
     if (onPreSubmit) {
-      console.log('Running preSubmit checks');     // Add this line
+      console.log('Running preSubmit checks'); // Add this line
       const preSubmitResponse = onPreSubmit(data);
       const error = preSubmitResponse.error;
       if (error) {
         enqueueSnackbar(error, { variant: 'error' });
-        console.log('PreSubmit error:', error);    // Add this line
+        console.log('PreSubmit error:', error); // Add this line
         return;
       }
       data = preSubmitResponse.data;
     }
 
     let response;
-    
-    try {  // Add try-catch block
+
+    try {
+      // Add try-catch block
       if (mode === FORM_MODE.CREATE) {
-        console.log('Creating new item with data:', data);  // Add this line
+        console.log('Creating new item with data:', data); // Add this line
         response = await createOne(data as CreateOneInput, {
           displayProgress: true,
           displaySuccess: true,
         });
-        console.log('Create response:', response);  // Add this line
+        console.log('Create response:', response); // Add this line
       }
       // ... rest of your submission logic
     } catch (error) {
-      console.error('Submission error:', error);    // Add this line
+      console.error('Submission error:', error); // Add this line
     }
   };
 
